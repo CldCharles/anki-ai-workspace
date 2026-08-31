@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+.pytest_cache/
+.test_addons/
+.venv/
+__pycache__/
+*.pyc
+dist/
+src/anki_ai_workspace/user_files/

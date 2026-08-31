@@ -1,0 +1,8 @@
+{
+  "package": "anki_ai_workspace",
+  "name": "[BETA] Anki AI Workspace",
+  "author": "Louis Mallez",
+  "version": "${VERSION}",
+  "mod": "${MOD}"
+}
+
