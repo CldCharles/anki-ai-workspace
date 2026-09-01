@@ -82,7 +82,6 @@ class ProfileDialog(QDialog):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI Deck Profiles")
-        self.setMinimumSize(900, 520)
         data = get_profile_repository().load(refresh=True)
         self.profiles = [_profile_to_editable(profile) for profile in data.profiles]
         self.assignments = dict(data.assignments)
@@ -110,10 +109,6 @@ class ProfileDialog(QDialog):
             self.save_button,
         ):
             button.setMinimumHeight(32)
-        self.import_button.setMinimumWidth(128)
-        self.export_button.setMinimumWidth(128)
-        self.cancel_button.setMinimumWidth(96)
-        self.save_button.setMinimumWidth(96)
         toolbar.addWidget(self.import_button)
         toolbar.addWidget(self.export_button)
         toolbar.addStretch()
@@ -139,8 +134,9 @@ class ProfileDialog(QDialog):
         """Fit the dialog to the screen below its always-visible top toolbar."""
 
         available = self.screen().availableGeometry()
-        width = max(self.minimumWidth(), min(1120, available.width() - 48))
-        height = max(self.minimumHeight(), min(800, available.height() - 80))
+        width = min(1120, max(1, available.width() - 48))
+        height = min(800, max(1, available.height() - 80))
+        self.setMinimumSize(min(900, width), min(520, height))
         self.resize(width, height)
 
     def _build_profiles_tab(self) -> QWidget:
@@ -153,7 +149,7 @@ class ProfileDialog(QDialog):
         layout.addWidget(splitter)
 
         left = QWidget()
-        left.setMinimumWidth(250)
+        left.setMinimumWidth(160)
         left_layout = QVBoxLayout(left)
         left_layout.setContentsMargins(0, 0, 8, 0)
         left_layout.setSpacing(8)
@@ -184,7 +180,6 @@ class ProfileDialog(QDialog):
         splitter.addWidget(left)
 
         right = QWidget()
-        right.setMinimumWidth(560)
         right_layout = QVBoxLayout(right)
         right_layout.setContentsMargins(8, 0, 8, 8)
         right_layout.setSpacing(12)
@@ -279,8 +274,7 @@ class ProfileDialog(QDialog):
         right_scroll = QScrollArea()
         right_scroll.setWidgetResizable(True)
         right_scroll.setFrameShape(QFrame.Shape.NoFrame)
-        right_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        right_scroll.setMinimumWidth(580)
+        right_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         right_scroll.setWidget(right)
         splitter.addWidget(right_scroll)
         splitter.setStretchFactor(0, 0)

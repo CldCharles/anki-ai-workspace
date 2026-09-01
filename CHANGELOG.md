@@ -17,6 +17,8 @@
   so they remain visible even when the bottom of a window is off-screen.
 - Refresh reviewer actions and shortcut buttons immediately after profile data
   is saved, without requiring card navigation or an Anki restart.
+- Clamp the profile dialog and its minimum size to the active screen, allowing
+  the editor to shrink or scroll instead of placing controls off-screen.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 

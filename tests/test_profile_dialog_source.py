@@ -14,9 +14,17 @@ class ProfileDialogSourceTests(unittest.TestCase):
         cls.source = SOURCE_PATH.read_text(encoding="utf-8")
 
     def test_editor_opens_at_a_comfortable_size(self) -> None:
-        self.assertIn("self.setMinimumSize(900, 520)", self.source)
         self.assertIn("def _resize_to_available_screen", self.source)
         self.assertIn("available.height() - 80", self.source)
+
+    def test_dialog_clamps_to_small_active_screens(self) -> None:
+        self.assertIn("width = min(1120, max(1, available.width() - 48))", self.source)
+        self.assertIn("height = min(800, max(1, available.height() - 80))", self.source)
+        self.assertIn(
+            "self.setMinimumSize(min(900, width), min(520, height))", self.source
+        )
+        self.assertNotIn("max(self.minimumWidth()", self.source)
+        self.assertNotIn("max(self.minimumHeight()", self.source)
 
     def test_multiline_prompt_fields_have_room_for_real_prompts(self) -> None:
         self.assertIn("self.profile_context.setMinimumHeight(90)", self.source)
@@ -49,7 +57,7 @@ class ProfileDialogSourceTests(unittest.TestCase):
     def test_profile_editor_scrolls_when_vertical_space_is_limited(self) -> None:
         self.assertIn("right_scroll = QScrollArea()", self.source)
         self.assertIn("right_scroll.setWidgetResizable(True)", self.source)
-        self.assertIn("Qt.ScrollBarPolicy.ScrollBarAlwaysOff", self.source)
+        self.assertIn("Qt.ScrollBarPolicy.ScrollBarAsNeeded", self.source)
         self.assertIn("right_scroll.setWidget(right)", self.source)
 
     def test_primary_actions_remain_in_a_fixed_top_toolbar(self) -> None:
