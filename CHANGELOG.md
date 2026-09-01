@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Added optional profile-action shortcuts that run directly from review cards.
+- Refined card shortcuts into a compact dark toolbar and kept profile management
+  available from the action menu even when a profile is assigned.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
