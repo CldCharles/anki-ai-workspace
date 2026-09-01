@@ -1,39 +1,84 @@
 # Anki AI Workspace
 
-Anki AI Workspace adds an AI workspace to Anki's review screen. It can answer
-questions about the card currently on screen and provide reusable, deck-specific
-actions through profiles.
+> Warning
+> Anki AI Workspace is beta software and may contain bugs or change without
+> notice.
+> AI requests can consume usage allowances or credits and may incur costs under
+> your provider plan. Monitor your usage and keep Anki backups.
+> Use it at your own risk. I am not responsible for credit consumption,
+> unexpected costs, data loss, deck or profile issues, or other side effects.
 
-## Before you begin
+![AI Workspace helping with the card currently being reviewed](https://raw.githubusercontent.com/lmallez/anki-ai-workspace/main/docs/images/anki-ai-workspace.png)
 
-The current release uses the Codex CLI. Install it and sign in; the add-on uses
-that saved CLI session and does not require an API key.
+> AI chat in Anki, tailored to your decks. Powered by your locally authenticated Codex CLI.
 
-Follow the official Codex installation and sign-in instructions, then run
-`codex` in a terminal if setup has not already been completed.
+Ask about the card you are reviewing without leaving Anki. The current card is
+included automatically as context, actions tell the AI what to do with it, and
+profiles give different decks their own actions. No API key is required.
 
-Restart Anki, open a review card, and choose the sparkle button. The first chat
-checks that Codex is available before sending a request.
+## Features
 
-## Use profiles
+- 💬 Chat with AI using the current card as automatic context
+- 🧩 Create reusable actions for explanations, mnemonics, exercises, and more
+- 🗂️ Give each deck its own set of actions
+- 🔒 Keep conversations temporary and your cards untouched
 
-Create profiles and bind them to decks from **Tools → AI Deck Profiles…**.
-A subdeck inherits its nearest parent profile unless it has a direct assignment.
-Profiles can be exported and shared; local deck assignments are never exported.
+## Custom actions and profiles
 
-Choose a profile action to send its instruction immediately, or choose
-**Custom chat** to type a question. Each card keeps a separate, temporary
-conversation while Anki is running. Use the conversation menu in the chat title
-bar to switch between active card conversations.
+An **action** is a reusable instruction you define once and use while reviewing.
+For example: **Explain simply**, **Create a mnemonic**, or **Make a practice
+exercise**. Select one and AI Workspace runs it with the current card as context.
 
-## Privacy and troubleshooting
+A **profile** is a set of actions for a deck. Give each deck the tools it needs;
+subdecks inherit their parent profile by default.
 
-Each request runs in a temporary, read-only directory and is discarded after it
-finishes. The add-on's operational log never includes card text, profile text,
-prompts, chat messages, credentials, or Codex output.
+## Requirements
 
-If the connection check fails, first confirm `codex --version` works in a new
-terminal, then run `codex` again to complete sign-in. Restart Anki after either
-step and use **Retry connection** in the chat window.
+- Anki with add-on support
+- The Codex CLI installed and signed in
 
-For configuration details, see `config.md` in this add-on folder.
+The current release supports the Codex CLI only. It uses your locally saved
+Codex session, so no API key is required.
+
+## Install
+
+Install Anki AI Workspace from AnkiWeb, restart Anki when prompted, then complete
+the Codex setup below.
+
+## Set up Codex
+
+Install Codex using its official documentation, then run:
+
+```bash
+codex
+```
+
+After completing sign-in, start Anki. AI Workspace checks the connection when
+you first open a chat and uses `codex` from your `PATH` by default.
+
+## Usage
+
+1. Review any card and select the sparkle button.
+2. Choose a profile action, or choose **Custom chat** to type a question.
+3. Open **Tools → AI Deck Profiles…** to create profiles and assign them to
+   decks.
+
+Profile exports contain only profile definitions. Deck assignments stay local
+to your Anki installation.
+
+## Privacy
+
+Requests run through your locally authenticated Codex CLI in a temporary,
+read-only working directory. Conversations remain in memory only for the active
+Anki session.
+
+AI Workspace does not modify card content, note fields, scheduling, or review
+intervals. Operational logs exclude card text, profile text, prompts, replies,
+credentials, and raw Codex output.
+
+## Troubleshooting
+
+- **Codex CLI was not found:** confirm that `codex --version` works in a new
+  terminal, then restart Anki.
+- **Codex is not signed in:** run `codex` in a terminal and complete sign-in.
+- **A request is taking too long:** cancel it in AI Workspace and try again.

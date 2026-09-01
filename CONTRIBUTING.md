@@ -66,6 +66,15 @@ A useful pull request description includes:
 - how it was tested
 - whether documentation, configuration, or profiles changed
 
+## Releases
+
+Pushing a version tag runs formatting, compilation, and unit tests before
+creating a GitHub Release with the `.ankiaddon` archive.
+
+Publishing to AnkiWeb remains a separate manual step so the appropriate AnkiWeb
+account can be used without storing personal publishing credentials in this
+repository.
+
 ## Style
 
 - Keep changes simple and explicit.
