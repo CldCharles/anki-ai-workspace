@@ -14,8 +14,9 @@ class ProfileDialogSourceTests(unittest.TestCase):
         cls.source = SOURCE_PATH.read_text(encoding="utf-8")
 
     def test_editor_opens_at_a_comfortable_size(self) -> None:
-        self.assertIn("self.setMinimumSize(960, 680)", self.source)
-        self.assertIn("self.resize(1120, 800)", self.source)
+        self.assertIn("self.setMinimumSize(900, 520)", self.source)
+        self.assertIn("def _resize_to_available_screen", self.source)
+        self.assertIn("available.height() - 80", self.source)
 
     def test_multiline_prompt_fields_have_room_for_real_prompts(self) -> None:
         self.assertIn("self.profile_context.setMinimumHeight(90)", self.source)
@@ -50,3 +51,10 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertIn("right_scroll.setWidgetResizable(True)", self.source)
         self.assertIn("Qt.ScrollBarPolicy.ScrollBarAlwaysOff", self.source)
         self.assertIn("right_scroll.setWidget(right)", self.source)
+
+    def test_footer_remains_outside_the_scrolling_content(self) -> None:
+        tabs = self.source.index("root.addWidget(self.tabs, 1)")
+        footer = self.source.index("root.addLayout(footer, 0)")
+        resize = self.source.index("self._resize_to_available_screen()")
+        self.assertLess(tabs, footer)
+        self.assertLess(footer, resize)

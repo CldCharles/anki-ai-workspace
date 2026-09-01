@@ -68,8 +68,7 @@ class ProfileDialog(QDialog):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI Deck Profiles")
-        self.setMinimumSize(960, 680)
-        self.resize(1120, 800)
+        self.setMinimumSize(900, 520)
         data = get_profile_repository().load(refresh=True)
         self.profiles = [_profile_to_editable(profile) for profile in data.profiles]
         self.assignments = dict(data.assignments)
@@ -86,7 +85,7 @@ class ProfileDialog(QDialog):
         self.tabs.addTab(self._build_profiles_tab(), "Profiles")
         self.tabs.addTab(self._build_assignments_tab(), "Deck Assignment")
         self.tabs.currentChanged.connect(self._tab_changed)
-        root.addWidget(self.tabs)
+        root.addWidget(self.tabs, 1)
 
         footer = QHBoxLayout()
         footer.setSpacing(8)
@@ -111,7 +110,7 @@ class ProfileDialog(QDialog):
         footer.addStretch()
         footer.addWidget(self.cancel_button)
         footer.addWidget(self.save_button)
-        root.addLayout(footer)
+        root.addLayout(footer, 0)
 
         self.import_button.clicked.connect(self._import_profile)
         self.export_button.clicked.connect(self._export_profile)
@@ -119,6 +118,15 @@ class ProfileDialog(QDialog):
         self.save_button.clicked.connect(self._save)
         self._refresh_profile_list(select=0 if self.profiles else -1)
         self._refresh_assignment_options()
+        self._resize_to_available_screen()
+
+    def _resize_to_available_screen(self) -> None:
+        """Fit the initial dialog to the screen so its fixed footer stays visible."""
+
+        available = self.screen().availableGeometry()
+        width = max(self.minimumWidth(), min(1120, available.width() - 48))
+        height = max(self.minimumHeight(), min(800, available.height() - 80))
+        self.resize(width, height)
 
     def _build_profiles_tab(self) -> QWidget:
         tab = QWidget()

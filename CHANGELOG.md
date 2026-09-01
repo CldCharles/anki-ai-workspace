@@ -11,6 +11,8 @@
   instruction editor cannot overlap it when the dialog is compressed.
 - Made the profile editor vertically scrollable while keeping profile selection
   and dialog actions visible.
+- Fit the profile dialog to the available screen and reserve fixed footer space
+  so Import, Export, Cancel, and Save remain visible while editing.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
