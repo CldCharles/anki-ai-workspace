@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
+from typing import Callable
 
 from aqt import mw
 from aqt.qt import (
@@ -45,6 +46,19 @@ from .profiles import (
 
 USER_ROLE = Qt.ItemDataRole.UserRole
 _dialog: "ProfileDialog | None" = None
+_profile_change_listeners: list[Callable[[], None]] = []
+
+
+def add_profile_change_listener(listener: Callable[[], None]) -> None:
+    """Notify long-lived reviewer UI controllers after profile data is saved."""
+
+    if listener not in _profile_change_listeners:
+        _profile_change_listeners.append(listener)
+
+
+def _notify_profile_change_listeners() -> None:
+    for listener in tuple(_profile_change_listeners):
+        listener()
 
 
 def show_profile_dialog() -> None:
@@ -624,6 +638,7 @@ class ProfileDialog(QDialog):
             QMessageBox.warning(self, "Cannot save profiles", str(error))
             return
         self._dirty = False
+        _notify_profile_change_listeners()
         self.accept()
 
     def _import_profile(self) -> None:

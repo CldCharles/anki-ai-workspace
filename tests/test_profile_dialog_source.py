@@ -59,3 +59,10 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertLess(toolbar, tabs)
         self.assertLess(tabs, resize)
         self.assertIn("toolbar.addWidget(self.save_button)", self.source)
+
+    def test_successful_save_notifies_reviewer_listeners(self) -> None:
+        save = self.source.index("get_profile_repository().save")
+        notify = self.source.index("_notify_profile_change_listeners()", save)
+        accept = self.source.index("self.accept()", notify)
+        self.assertLess(save, notify)
+        self.assertLess(notify, accept)

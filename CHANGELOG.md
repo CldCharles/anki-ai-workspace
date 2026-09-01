@@ -15,6 +15,8 @@
   so Import, Export, Cancel, and Save remain visible while editing.
 - Moved profile import, export, cancel, and save actions to a fixed top toolbar
   so they remain visible even when the bottom of a window is off-screen.
+- Refresh reviewer actions and shortcut buttons immediately after profile data
+  is saved, without requiring card navigation or an Anki restart.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
