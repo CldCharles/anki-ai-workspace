@@ -19,7 +19,8 @@ class ProfileDialogSourceTests(unittest.TestCase):
 
     def test_multiline_prompt_fields_have_room_for_real_prompts(self) -> None:
         self.assertIn("self.profile_context.setMinimumHeight(90)", self.source)
-        self.assertIn("self.action_instruction.setMinimumHeight(150)", self.source)
+        self.assertIn("self.action_instruction.setMinimumHeight(120)", self.source)
+        self.assertIn("self.action_instruction.setMaximumHeight(220)", self.source)
 
     def test_actions_can_be_exposed_as_review_card_shortcuts(self) -> None:
         self.assertIn("self.action_show_on_card = QCheckBox", self.source)
@@ -37,3 +38,9 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertIn("QFormLayout.RowWrapPolicy.WrapLongRows", self.source)
         self.assertIn('QGroupBox("Profile details")', self.source)
         self.assertIn('QGroupBox("Actions")', self.source)
+
+    def test_shortcut_row_has_reserved_space_below_instruction(self) -> None:
+        self.assertIn("action_editor.setMinimumHeight(210)", self.source)
+        self.assertIn("action_form = QGridLayout(action_editor)", self.source)
+        self.assertIn("action_form.setRowMinimumHeight(2, 32)", self.source)
+        self.assertIn("actions_group_layout.addWidget(action_editor)", self.source)

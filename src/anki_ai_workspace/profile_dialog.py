@@ -214,19 +214,42 @@ class ProfileDialog(QDialog):
             button.setToolTip(tooltip)
             action_buttons.addWidget(button)
         actions_group_layout.addLayout(action_buttons)
-        action_form = QFormLayout()
-        self._configure_form(action_form)
+        action_editor = QWidget()
+        action_editor.setMinimumHeight(210)
+        action_form = QGridLayout(action_editor)
+        action_form.setContentsMargins(0, 0, 0, 0)
+        action_form.setHorizontalSpacing(12)
+        action_form.setVerticalSpacing(8)
+        action_form.setColumnMinimumWidth(0, 92)
+        action_form.setColumnStretch(1, 1)
         self.action_title = QLineEdit()
         self.action_instruction = QTextEdit()
         self.action_instruction.setPlaceholderText(
             "The instruction automatically sent when this action is selected."
         )
-        self.action_instruction.setMinimumHeight(150)
+        self.action_instruction.setMinimumHeight(120)
+        self.action_instruction.setMaximumHeight(220)
+        self.action_instruction.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding
+        )
         self.action_show_on_card = QCheckBox("Show as a shortcut on review cards")
-        action_form.addRow("Button title", self.action_title)
-        action_form.addRow("Instruction", self.action_instruction)
-        action_form.addRow("Shortcut", self.action_show_on_card)
-        actions_group_layout.addLayout(action_form)
+        self.action_show_on_card.setMinimumHeight(32)
+        action_labels = (
+            QLabel("Button title"),
+            QLabel("Instruction"),
+            QLabel("Shortcut"),
+        )
+        for label in action_labels:
+            label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        action_form.addWidget(action_labels[0], 0, 0)
+        action_form.addWidget(self.action_title, 0, 1)
+        action_form.addWidget(action_labels[1], 1, 0)
+        action_form.addWidget(self.action_instruction, 1, 1)
+        action_form.addWidget(action_labels[2], 2, 0)
+        action_form.addWidget(self.action_show_on_card, 2, 1)
+        action_form.setRowMinimumHeight(2, 32)
+        action_form.setRowStretch(1, 1)
+        actions_group_layout.addWidget(action_editor)
         right_layout.addWidget(actions_group, 1)
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)

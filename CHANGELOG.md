@@ -7,6 +7,8 @@
   available from the action menu even when a profile is assigned.
 - Reworked the profile editor with stable sections, aligned controls, and
   responsive form rows that avoid overlap at larger font and display scales.
+- Reserved a dedicated grid row for the review-card shortcut option so the
+  instruction editor cannot overlap it when the dialog is compressed.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
