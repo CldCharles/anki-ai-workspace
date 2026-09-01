@@ -14,15 +14,26 @@ class ProfileDialogSourceTests(unittest.TestCase):
         cls.source = SOURCE_PATH.read_text(encoding="utf-8")
 
     def test_editor_opens_at_a_comfortable_size(self) -> None:
-        self.assertIn("self.setMinimumSize(900, 650)", self.source)
-        self.assertIn("self.resize(1050, 760)", self.source)
+        self.assertIn("self.setMinimumSize(960, 680)", self.source)
+        self.assertIn("self.resize(1120, 800)", self.source)
 
     def test_multiline_prompt_fields_have_room_for_real_prompts(self) -> None:
-        self.assertIn("self.profile_context.setMinimumHeight(130)", self.source)
-        self.assertIn("self.action_instruction.setMinimumHeight(190)", self.source)
-        self.assertIn("self.action_instruction.setMaximumHeight(300)", self.source)
+        self.assertIn("self.profile_context.setMinimumHeight(90)", self.source)
+        self.assertIn("self.action_instruction.setMinimumHeight(150)", self.source)
 
     def test_actions_can_be_exposed_as_review_card_shortcuts(self) -> None:
         self.assertIn("self.action_show_on_card = QCheckBox", self.source)
         self.assertIn("Show as a shortcut on review cards", self.source)
         self.assertIn('action["show_on_card"]', self.source)
+
+    def test_button_rows_are_aligned_and_resist_overlap(self) -> None:
+        self.assertIn("profile_buttons = QGridLayout()", self.source)
+        self.assertIn("button.setMinimumHeight(32)", self.source)
+        self.assertIn("button.setFixedSize(36, 32)", self.source)
+        self.assertIn("splitter.setChildrenCollapsible(False)", self.source)
+
+    def test_forms_wrap_cleanly_when_horizontal_space_is_tight(self) -> None:
+        self.assertIn("def _configure_form", self.source)
+        self.assertIn("QFormLayout.RowWrapPolicy.WrapLongRows", self.source)
+        self.assertIn('QGroupBox("Profile details")', self.source)
+        self.assertIn('QGroupBox("Actions")', self.source)

@@ -10,12 +10,15 @@ from aqt.qt import (
     QDialog,
     QFileDialog,
     QFormLayout,
+    QGridLayout,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QListWidget,
     QMessageBox,
     QPushButton,
+    QSizePolicy,
     QSplitter,
     QTabWidget,
     QTextEdit,
@@ -63,8 +66,8 @@ class ProfileDialog(QDialog):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI Deck Profiles")
-        self.setMinimumSize(900, 650)
-        self.resize(1050, 760)
+        self.setMinimumSize(960, 680)
+        self.resize(1120, 800)
         data = get_profile_repository().load(refresh=True)
         self.profiles = [_profile_to_editable(profile) for profile in data.profiles]
         self.assignments = dict(data.assignments)
@@ -75,6 +78,8 @@ class ProfileDialog(QDialog):
         self._deck_rows: dict[str, tuple[QComboBox, QLabel, DeckReference]] = {}
 
         root = QVBoxLayout(self)
+        root.setContentsMargins(16, 16, 16, 16)
+        root.setSpacing(12)
         self.tabs = QTabWidget()
         self.tabs.addTab(self._build_profiles_tab(), "Profiles")
         self.tabs.addTab(self._build_assignments_tab(), "Deck Assignment")
@@ -82,11 +87,23 @@ class ProfileDialog(QDialog):
         root.addWidget(self.tabs)
 
         footer = QHBoxLayout()
+        footer.setSpacing(8)
         self.import_button = QPushButton("Import profile…")
         self.export_button = QPushButton("Export profile…")
         self.cancel_button = QPushButton("Cancel")
         self.save_button = QPushButton("Save")
         self.save_button.setDefault(True)
+        for button in (
+            self.import_button,
+            self.export_button,
+            self.cancel_button,
+            self.save_button,
+        ):
+            button.setMinimumHeight(32)
+        self.import_button.setMinimumWidth(128)
+        self.export_button.setMinimumWidth(128)
+        self.cancel_button.setMinimumWidth(96)
+        self.save_button.setMinimumWidth(96)
         footer.addWidget(self.import_button)
         footer.addWidget(self.export_button)
         footer.addStretch()
@@ -104,31 +121,54 @@ class ProfileDialog(QDialog):
     def _build_profiles_tab(self) -> QWidget:
         tab = QWidget()
         layout = QHBoxLayout(tab)
-        splitter = QSplitter()
+        layout.setContentsMargins(10, 10, 10, 10)
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.setChildrenCollapsible(False)
+        splitter.setHandleWidth(8)
         layout.addWidget(splitter)
 
         left = QWidget()
+        left.setMinimumWidth(250)
         left_layout = QVBoxLayout(left)
-        left_layout.addWidget(QLabel("Profiles"))
+        left_layout.setContentsMargins(0, 0, 8, 0)
+        left_layout.setSpacing(8)
+        profile_heading = QLabel("Profiles")
+        profile_heading.setStyleSheet("font-weight: 600;")
+        left_layout.addWidget(profile_heading)
         self.profile_list = QListWidget()
         self.profile_list.currentRowChanged.connect(self._profile_selected)
         left_layout.addWidget(self.profile_list)
-        profile_buttons = QHBoxLayout()
+        profile_buttons = QGridLayout()
+        profile_buttons.setHorizontalSpacing(6)
+        profile_buttons.setVerticalSpacing(6)
         self.new_profile_button = QPushButton("New")
         self.duplicate_profile_button = QPushButton("Duplicate")
         self.delete_profile_button = QPushButton("Delete")
-        for button in (
-            self.new_profile_button,
-            self.duplicate_profile_button,
-            self.delete_profile_button,
+        for column, button in enumerate(
+            (
+                self.new_profile_button,
+                self.duplicate_profile_button,
+                self.delete_profile_button,
+            )
         ):
-            profile_buttons.addWidget(button)
+            button.setMinimumHeight(32)
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            profile_buttons.addWidget(button, 0, column)
+            profile_buttons.setColumnStretch(column, 1)
         left_layout.addLayout(profile_buttons)
         splitter.addWidget(left)
 
         right = QWidget()
+        right.setMinimumWidth(560)
         right_layout = QVBoxLayout(right)
+        right_layout.setContentsMargins(8, 0, 0, 0)
+        right_layout.setSpacing(12)
+
+        profile_group = QGroupBox("Profile details")
+        profile_group_layout = QVBoxLayout(profile_group)
+        profile_group_layout.setContentsMargins(12, 14, 12, 12)
         form = QFormLayout()
+        self._configure_form(form)
         self.profile_name = QLineEdit()
         self.profile_title_field = QLineEdit()
         self.profile_title_field.setPlaceholderText(
@@ -138,46 +178,60 @@ class ProfileDialog(QDialog):
         self.profile_context.setPlaceholderText(
             "Example: I am a B1 language learner. Keep explanations concise."
         )
-        self.profile_context.setMinimumHeight(130)
-        self.profile_context.setMaximumHeight(190)
+        self.profile_context.setMinimumHeight(90)
+        self.profile_context.setMaximumHeight(140)
         form.addRow("Name", self.profile_name)
         form.addRow("Title field", self.profile_title_field)
         form.addRow("Context", self.profile_context)
-        right_layout.addLayout(form)
-        right_layout.addWidget(QLabel("Actions"))
+        profile_group_layout.addLayout(form)
+        right_layout.addWidget(profile_group)
+
+        actions_group = QGroupBox("Actions")
+        actions_group_layout = QVBoxLayout(actions_group)
+        actions_group_layout.setContentsMargins(12, 14, 12, 12)
+        actions_group_layout.setSpacing(8)
         self.action_list = QListWidget()
-        self.action_list.setMinimumHeight(150)
+        self.action_list.setMinimumHeight(120)
         self.action_list.currentRowChanged.connect(self._action_selected)
-        right_layout.addWidget(self.action_list)
+        actions_group_layout.addWidget(self.action_list, 1)
         action_buttons = QHBoxLayout()
+        action_buttons.setSpacing(6)
         self.add_action_button = QPushButton("Add action")
         self.delete_action_button = QPushButton("Delete")
         self.action_up_button = QPushButton("↑")
         self.action_down_button = QPushButton("↓")
-        for button in (
-            self.add_action_button,
-            self.delete_action_button,
-            self.action_up_button,
-            self.action_down_button,
-        ):
+        self.add_action_button.setMinimumWidth(110)
+        self.delete_action_button.setMinimumWidth(90)
+        for button in (self.add_action_button, self.delete_action_button):
+            button.setMinimumHeight(32)
             action_buttons.addWidget(button)
         action_buttons.addStretch()
-        right_layout.addLayout(action_buttons)
+        for button, tooltip in (
+            (self.action_up_button, "Move action up"),
+            (self.action_down_button, "Move action down"),
+        ):
+            button.setFixedSize(36, 32)
+            button.setToolTip(tooltip)
+            action_buttons.addWidget(button)
+        actions_group_layout.addLayout(action_buttons)
         action_form = QFormLayout()
+        self._configure_form(action_form)
         self.action_title = QLineEdit()
         self.action_instruction = QTextEdit()
         self.action_instruction.setPlaceholderText(
             "The instruction automatically sent when this action is selected."
         )
-        self.action_instruction.setMinimumHeight(190)
-        self.action_instruction.setMaximumHeight(300)
+        self.action_instruction.setMinimumHeight(150)
         self.action_show_on_card = QCheckBox("Show as a shortcut on review cards")
         action_form.addRow("Button title", self.action_title)
         action_form.addRow("Instruction", self.action_instruction)
         action_form.addRow("Shortcut", self.action_show_on_card)
-        right_layout.addLayout(action_form)
+        actions_group_layout.addLayout(action_form)
+        right_layout.addWidget(actions_group, 1)
         splitter.addWidget(right)
-        splitter.setSizes([260, 740])
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([270, 790])
 
         self.new_profile_button.clicked.connect(self._new_profile)
         self.duplicate_profile_button.clicked.connect(self._duplicate_profile)
@@ -194,9 +248,21 @@ class ProfileDialog(QDialog):
         self.action_show_on_card.toggled.connect(self._edited)
         return tab
 
+    @staticmethod
+    def _configure_form(form: QFormLayout) -> None:
+        """Keep labels and fields readable when fonts or window size increase."""
+
+        form.setHorizontalSpacing(12)
+        form.setVerticalSpacing(8)
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
+        form.setLabelAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+
     def _build_assignments_tab(self) -> QWidget:
         tab = QWidget()
         layout = QVBoxLayout(tab)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
         explanation = QLabel(
             "Assign a profile directly, or inherit the nearest parent deck's profile. "
             "Deck renames keep their assignment."
