@@ -636,9 +636,7 @@ class ProfileDialog(QDialog):
         self.accept()
 
     def _import_profile(self) -> None:
-        filename, _filter = QFileDialog.getOpenFileName(
-            self, "Import AI Workspace profile", "", "JSON files (*.json)"
-        )
+        filename = self._choose_import_filename()
         if not filename:
             return
         try:
@@ -660,6 +658,17 @@ class ProfileDialog(QDialog):
         self._dirty = True
         self._refresh_profile_list(select=len(self.profiles) - 1)
 
+    def _choose_import_filename(self) -> str:
+        dialog = QFileDialog(self, "Import AI Workspace profile")
+        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        dialog.setNameFilter("JSON files (*.json)")
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return ""
+        filenames = dialog.selectedFiles()
+        return filenames[0] if filenames else ""
+
     def _export_profile(self) -> None:
         if not (0 <= self._selected_profile < len(self.profiles)):
             return
@@ -671,14 +680,22 @@ class ProfileDialog(QDialog):
             QMessageBox.warning(self, "Cannot export profile", str(error))
             return
         default_name = "-".join(profile.name.lower().split()) or "ai-workspace-profile"
-        filename, _filter = QFileDialog.getSaveFileName(
-            self,
-            "Export AI Workspace profile",
-            str(Path.home() / f"{default_name}.json"),
-            "JSON files (*.json)",
-        )
+        filename = self._choose_export_filename(Path.home() / f"{default_name}.json")
         if filename:
             write_profile_file(profile, filename)
+
+    def _choose_export_filename(self, default_path: Path) -> str:
+        dialog = QFileDialog(self, "Export AI Workspace profile")
+        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptSave)
+        dialog.setFileMode(QFileDialog.FileMode.AnyFile)
+        dialog.setNameFilter("JSON files (*.json)")
+        dialog.setDefaultSuffix("json")
+        dialog.selectFile(str(default_path))
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return ""
+        filenames = dialog.selectedFiles()
+        return filenames[0] if filenames else ""
 
     def reject(self) -> None:
         if self._dirty:

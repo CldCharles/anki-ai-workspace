@@ -74,3 +74,13 @@ class ProfileDialogSourceTests(unittest.TestCase):
         accept = self.source.index("self.accept()", notify)
         self.assertLess(save, notify)
         self.assertLess(notify, accept)
+
+    def test_cancelled_file_picker_keeps_profile_editor_open(self) -> None:
+        self.assertIn("def _choose_import_filename", self.source)
+        self.assertIn("def _choose_export_filename", self.source)
+        self.assertEqual(self.source.count("QFileDialog.Option.DontUseNativeDialog"), 2)
+        self.assertEqual(
+            self.source.count("dialog.exec() != QDialog.DialogCode.Accepted"), 2
+        )
+        self.assertNotIn("QFileDialog.getOpenFileName", self.source)
+        self.assertNotIn("QFileDialog.getSaveFileName", self.source)

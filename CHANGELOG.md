@@ -19,6 +19,9 @@
   is saved, without requiring card navigation or an Anki restart.
 - Clamp the profile dialog and its minimum size to the active screen, allowing
   the editor to shrink or scroll instead of placing controls off-screen.
+- Keep the profile editor open when import or export file selection is canceled,
+  and visually separate profile settings from card actions.
+- Match the card shortcut bar to the launcher height and use solid white labels.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
