@@ -44,3 +44,9 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertIn("action_form = QGridLayout(action_editor)", self.source)
         self.assertIn("action_form.setRowMinimumHeight(2, 32)", self.source)
         self.assertIn("actions_group_layout.addWidget(action_editor)", self.source)
+
+    def test_profile_editor_scrolls_when_vertical_space_is_limited(self) -> None:
+        self.assertIn("right_scroll = QScrollArea()", self.source)
+        self.assertIn("right_scroll.setWidgetResizable(True)", self.source)
+        self.assertIn("Qt.ScrollBarPolicy.ScrollBarAlwaysOff", self.source)
+        self.assertIn("right_scroll.setWidget(right)", self.source)

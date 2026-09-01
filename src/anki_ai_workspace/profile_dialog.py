@@ -10,6 +10,7 @@ from aqt.qt import (
     QDialog,
     QFileDialog,
     QFormLayout,
+    QFrame,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -18,6 +19,7 @@ from aqt.qt import (
     QListWidget,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QSplitter,
     QTabWidget,
@@ -161,7 +163,7 @@ class ProfileDialog(QDialog):
         right = QWidget()
         right.setMinimumWidth(560)
         right_layout = QVBoxLayout(right)
-        right_layout.setContentsMargins(8, 0, 0, 0)
+        right_layout.setContentsMargins(8, 0, 8, 8)
         right_layout.setSpacing(12)
 
         profile_group = QGroupBox("Profile details")
@@ -251,7 +253,13 @@ class ProfileDialog(QDialog):
         action_form.setRowStretch(1, 1)
         actions_group_layout.addWidget(action_editor)
         right_layout.addWidget(actions_group, 1)
-        splitter.addWidget(right)
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        right_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        right_scroll.setMinimumWidth(580)
+        right_scroll.setWidget(right)
+        splitter.addWidget(right_scroll)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([270, 790])

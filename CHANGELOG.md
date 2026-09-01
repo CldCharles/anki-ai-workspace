@@ -9,6 +9,8 @@
   responsive form rows that avoid overlap at larger font and display scales.
 - Reserved a dedicated grid row for the review-card shortcut option so the
   instruction editor cannot overlap it when the dialog is compressed.
+- Made the profile editor vertically scrollable while keeping profile selection
+  and dialog actions visible.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 
