@@ -86,6 +86,12 @@ class ReviewerWindowSourceTests(unittest.TestCase):
         self.assertIn("action:'open_deck_general'", self.source)
         self.assertIn("action:'select_action'", self.source)
 
+    def test_opted_in_actions_render_as_direct_card_shortcuts(self) -> None:
+        self.assertIn('id="anki-ai-workspace-shortcuts"', self.source)
+        self.assertIn("data.shortcuts.forEach", self.source)
+        self.assertIn("node.disabled=Boolean(data.shortcuts_pending)", self.source)
+        self.assertIn("placeShortcuts", self.source)
+
     def test_reduced_launcher_uses_independent_new_and_restore_buttons(self) -> None:
         self.assertIn("anki-ai-workspace-has-hidden-workspace", self.source)
         self.assertIn("anki-ai-workspace-restore-dot", self.source)

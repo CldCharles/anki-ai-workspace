@@ -24,6 +24,13 @@ class ReviewerChatSourceTests(unittest.TestCase):
         self.assertIn("self._card_session(create=True)", self.source)
         self.assertIn("RequestKind.PRESET", self.source)
 
+    def test_card_shortcuts_expose_only_opted_in_profile_actions(self) -> None:
+        self.assertIn('"shortcuts": self._shortcut_payload()', self.source)
+        self.assertIn("if action.show_on_card", self.source)
+        self.assertIn(
+            '"shortcuts_pending": self._card_shortcuts_pending()', self.source
+        )
+
     def test_preset_actions_render_a_safe_title_instead_of_the_instruction(
         self,
     ) -> None:

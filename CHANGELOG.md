@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Added optional profile-action shortcuts that run directly from review cards.
+- Included the persistent `user_files` directory in release archives so Anki
+  preserves profiles and local deck assignments during upgrades.
+
 ## 0.1.0 - 2026-08-31
 
 - Added the initial Anki AI Workspace add-on, deck profiles, reviewer workspace,

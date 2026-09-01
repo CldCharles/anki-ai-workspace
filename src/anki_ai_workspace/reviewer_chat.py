@@ -509,6 +509,8 @@ class ReviewerChatController:
             "workspace_open": self._open and session is not None,
             "menu_open": self._menu_open,
             "menu": self._menu_payload(),
+            "shortcuts": self._shortcut_payload(),
+            "shortcuts_pending": self._card_shortcuts_pending(),
             "sessions": self._sessions_payload(),
             "selected_conversation_id": session.conversation_id if session else None,
             "workspace_has_sessions": bool(self._sessions),
@@ -557,6 +559,20 @@ class ReviewerChatController:
             "has_profile": profile is not None,
             "deck_general_label": f"{self._deck_name(deck_id)} · General",
         }
+
+    def _shortcut_payload(self) -> list[dict[str, str]]:
+        profile = self._effective_profile_for_current_card()
+        if profile is None:
+            return []
+        return [
+            {"id": action.id, "title": action.title}
+            for action in profile.actions
+            if action.show_on_card
+        ]
+
+    def _card_shortcuts_pending(self) -> bool:
+        session = self._card_session(create=False)
+        return bool(session and self._is_busy(session))
 
     def _sessions_payload(self) -> list[dict[str, object]]:
         return [

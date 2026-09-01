@@ -21,3 +21,8 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertIn("self.profile_context.setMinimumHeight(130)", self.source)
         self.assertIn("self.action_instruction.setMinimumHeight(190)", self.source)
         self.assertIn("self.action_instruction.setMaximumHeight(300)", self.source)
+
+    def test_actions_can_be_exposed_as_review_card_shortcuts(self) -> None:
+        self.assertIn("self.action_show_on_card = QCheckBox", self.source)
+        self.assertIn("Show as a shortcut on review cards", self.source)
+        self.assertIn('action["show_on_card"]', self.source)

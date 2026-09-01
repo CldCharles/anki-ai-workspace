@@ -5,6 +5,7 @@ from pathlib import Path
 
 from aqt import mw
 from aqt.qt import (
+    QCheckBox,
     QComboBox,
     QDialog,
     QFileDialog,
@@ -170,8 +171,10 @@ class ProfileDialog(QDialog):
         )
         self.action_instruction.setMinimumHeight(190)
         self.action_instruction.setMaximumHeight(300)
+        self.action_show_on_card = QCheckBox("Show as a shortcut on review cards")
         action_form.addRow("Button title", self.action_title)
         action_form.addRow("Instruction", self.action_instruction)
+        action_form.addRow("Shortcut", self.action_show_on_card)
         right_layout.addLayout(action_form)
         splitter.addWidget(right)
         splitter.setSizes([260, 740])
@@ -188,6 +191,7 @@ class ProfileDialog(QDialog):
         self.profile_context.textChanged.connect(self._edited)
         self.action_title.textChanged.connect(self._edited)
         self.action_instruction.textChanged.connect(self._edited)
+        self.action_show_on_card.toggled.connect(self._edited)
         return tab
 
     def _build_assignments_tab(self) -> QWidget:
@@ -265,8 +269,12 @@ class ProfileDialog(QDialog):
         action = self._current_action()
         self.action_title.setText(action["title"] if action else "")
         self.action_instruction.setPlainText(action["instruction"] if action else "")
+        self.action_show_on_card.setChecked(
+            bool(action["show_on_card"]) if action else False
+        )
         self.action_title.setEnabled(action is not None)
         self.action_instruction.setEnabled(action is not None)
+        self.action_show_on_card.setEnabled(action is not None)
         self.delete_action_button.setEnabled(action is not None)
         self.action_up_button.setEnabled(
             action is not None and self._selected_action > 0
@@ -295,6 +303,7 @@ class ProfileDialog(QDialog):
             return
         action["title"] = self.action_title.text().strip()
         action["instruction"] = self.action_instruction.toPlainText().strip()
+        action["show_on_card"] = self.action_show_on_card.isChecked()
         item = self.action_list.item(self._selected_action)
         if item is not None:
             item.setText(action["title"] or "Untitled action")
@@ -355,7 +364,14 @@ class ProfileDialog(QDialog):
             return
         self._store_current_fields()
         actions = self._current_actions()
-        actions.append({"id": new_id(), "title": "", "instruction": ""})
+        actions.append(
+            {
+                "id": new_id(),
+                "title": "",
+                "instruction": "",
+                "show_on_card": False,
+            }
+        )
         self._dirty = True
         self._refresh_action_list(select=len(actions) - 1)
         self.action_title.setFocus()
@@ -568,7 +584,12 @@ def _profile_to_editable(profile: DeckProfile) -> dict:
         "title_field": profile.title_field,
         "context": profile.context,
         "actions": [
-            {"id": action.id, "title": action.title, "instruction": action.instruction}
+            {
+                "id": action.id,
+                "title": action.title,
+                "instruction": action.instruction,
+                "show_on_card": action.show_on_card,
+            }
             for action in profile.actions
         ],
     }
@@ -584,6 +605,7 @@ def _profile_from_editable(value: dict) -> DeckProfile:
                 str(action["id"]),
                 str(action["title"]).strip(),
                 str(action["instruction"]).strip(),
+                bool(action.get("show_on_card", False)),
             )
             for action in value["actions"]
         ),
