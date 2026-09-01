@@ -112,9 +112,7 @@ class ReviewerWindowSourceTests(unittest.TestCase):
         self.assertLess(general, divider)
         self.assertLess(divider, configure)
         self.assertIn("anki-ai-workspace-management-divider", self.source)
-        self.assertIn(
-            '.anki-ai-workspace-configure::before{content:"\\2699"', self.source
-        )
+        self.assertNotIn("anki-ai-workspace-configure::before", self.source)
 
     def test_reduced_launcher_uses_independent_new_and_restore_buttons(self) -> None:
         self.assertIn("anki-ai-workspace-has-hidden-workspace", self.source)
