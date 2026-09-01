@@ -52,9 +52,10 @@ class ProfileDialogSourceTests(unittest.TestCase):
         self.assertIn("Qt.ScrollBarPolicy.ScrollBarAlwaysOff", self.source)
         self.assertIn("right_scroll.setWidget(right)", self.source)
 
-    def test_footer_remains_outside_the_scrolling_content(self) -> None:
+    def test_primary_actions_remain_in_a_fixed_top_toolbar(self) -> None:
+        toolbar = self.source.index("root.addLayout(toolbar, 0)")
         tabs = self.source.index("root.addWidget(self.tabs, 1)")
-        footer = self.source.index("root.addLayout(footer, 0)")
         resize = self.source.index("self._resize_to_available_screen()")
-        self.assertLess(tabs, footer)
-        self.assertLess(footer, resize)
+        self.assertLess(toolbar, tabs)
+        self.assertLess(tabs, resize)
+        self.assertIn("toolbar.addWidget(self.save_button)", self.source)

@@ -13,6 +13,8 @@
   and dialog actions visible.
 - Fit the profile dialog to the available screen and reserve fixed footer space
   so Import, Export, Cancel, and Save remain visible while editing.
+- Moved profile import, export, cancel, and save actions to a fixed top toolbar
+  so they remain visible even when the bottom of a window is off-screen.
 - Included the persistent `user_files` directory in release archives so Anki
   preserves profiles and local deck assignments during upgrades.
 

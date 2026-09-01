@@ -81,14 +81,9 @@ class ProfileDialog(QDialog):
         root = QVBoxLayout(self)
         root.setContentsMargins(16, 16, 16, 16)
         root.setSpacing(12)
-        self.tabs = QTabWidget()
-        self.tabs.addTab(self._build_profiles_tab(), "Profiles")
-        self.tabs.addTab(self._build_assignments_tab(), "Deck Assignment")
-        self.tabs.currentChanged.connect(self._tab_changed)
-        root.addWidget(self.tabs, 1)
 
-        footer = QHBoxLayout()
-        footer.setSpacing(8)
+        toolbar = QHBoxLayout()
+        toolbar.setSpacing(8)
         self.import_button = QPushButton("Import profile…")
         self.export_button = QPushButton("Export profile…")
         self.cancel_button = QPushButton("Cancel")
@@ -105,12 +100,18 @@ class ProfileDialog(QDialog):
         self.export_button.setMinimumWidth(128)
         self.cancel_button.setMinimumWidth(96)
         self.save_button.setMinimumWidth(96)
-        footer.addWidget(self.import_button)
-        footer.addWidget(self.export_button)
-        footer.addStretch()
-        footer.addWidget(self.cancel_button)
-        footer.addWidget(self.save_button)
-        root.addLayout(footer, 0)
+        toolbar.addWidget(self.import_button)
+        toolbar.addWidget(self.export_button)
+        toolbar.addStretch()
+        toolbar.addWidget(self.cancel_button)
+        toolbar.addWidget(self.save_button)
+        root.addLayout(toolbar, 0)
+
+        self.tabs = QTabWidget()
+        self.tabs.addTab(self._build_profiles_tab(), "Profiles")
+        self.tabs.addTab(self._build_assignments_tab(), "Deck Assignment")
+        self.tabs.currentChanged.connect(self._tab_changed)
+        root.addWidget(self.tabs, 1)
 
         self.import_button.clicked.connect(self._import_profile)
         self.export_button.clicked.connect(self._export_profile)
@@ -121,7 +122,7 @@ class ProfileDialog(QDialog):
         self._resize_to_available_screen()
 
     def _resize_to_available_screen(self) -> None:
-        """Fit the initial dialog to the screen so its fixed footer stays visible."""
+        """Fit the dialog to the screen below its always-visible top toolbar."""
 
         available = self.screen().availableGeometry()
         width = max(self.minimumWidth(), min(1120, available.width() - 48))
